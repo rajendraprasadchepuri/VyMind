@@ -1,123 +1,105 @@
 .container {
-    padding: 2rem;
-    max-width: 1200px;
+    padding: 3rem 4rem;
+    max-width: 1400px;
     margin: 0 auto;
-    background-color: #E6E7E8;
-    /* Legacy background */
 }
 
-.header {
-    margin-bottom: 2rem;
-}
-
-.title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #4D4D4D;
-    /* Legacy text color */
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-.subtitle {
-    color: #4D4D4D;
-    font-size: 1rem;
-}
-
-.statsGrid {
+/* Metrics Row - Streamlit st.columns(3) */
+.metricsRow {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
-.statCard {
+.metricBox {
     background-color: #FFFFFF;
-    padding: 15px;
-    border: 1px solid #E6E7E8;
-    border-radius: 0px;
-    /* Sharp corners */
-    text-align: center;
-    box-shadow: none;
-    /* Flat look */
-}
-
-.statCard:hover {
-    border-color: #009FDF;
-    /* SABIC Blue on hover */
-}
-
-.statValue {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #4D4D4D;
-}
-
-.statLabel {
-    color: #4D4D4D;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 0.5rem;
-}
-
-.tableCard {
-    background-color: #FFFFFF;
-    border: 1px solid #E6E7E8;
-    border-radius: 0px;
-    /* Sharp corners */
-    overflow: hidden;
-    box-shadow: none;
-}
-
-.th,
-.td {
-    padding: 0.8rem 1rem;
+    padding: 2rem 1.5rem;
+    border: 1px solid rgba(49, 51, 63, 0.1);
+    border-radius: 4px;
     text-align: left;
-    border-bottom: 1px solid #E6E7E8;
 }
 
-.th {
-    background-color: #F5F5F5;
-    font-weight: 700;
-    color: #4D4D4D;
+.metricLabel {
+    font-size: 0.875rem;
+    color: #808495;
+    margin-bottom: 0.75rem;
+    font-weight: 400;
 }
 
-.riskTag {
-    display: inline-block;
-    padding: 0.2rem 0.6rem;
-    font-weight: 700;
-    font-size: 0.75rem;
-    border-radius: 0px;
-    /* Sharp corners */
-    text-transform: uppercase;
+.metricValue {
+    font-size: 3rem;
+    font-weight: 600;
+    color: #262730;
+    line-height: 1;
 }
 
-.riskCritical {
-    background-color: #FFE5E5;
-    color: #CC0000;
-    border: 1px solid #CC0000;
+/* Customer Cards - Streamlit st.container(border=True) */
+.customerCard {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(49, 51, 63, 0.1);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
 }
 
-.riskHigh {
-    background-color: #FFF4E5;
-    color: #FF8C00;
-    border: 1px solid #FF8C00;
+.cardGrid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 2fr;
+    /* Matches [2, 1, 1, 2] from Streamlit */
+    gap: 2rem;
+    align-items: start;
 }
 
-.riskMedium {
-    background-color: #FFF9E5;
-    color: #CCA300;
-    border: 1px solid #CCA300;
+/* Error Box - Streamlit st.error() */
+.errorBox {
+    background-color: #fee2e2;
+    color: #991b1b;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-left: 4px solid #dc2626;
 }
 
-.riskLow {
-    background-color: #E5F9E5;
-    color: #008000;
-    border: 1px solid #008000;
+/* Success Box - Streamlit st.success() */
+.successBox {
+    background-color: #d1fae5;
+    color: #065f46;
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    border-left: 4px solid #10b981;
 }
 
-.riskNonActive {
-    background-color: #F5F5F5;
-    color: #888888;
-    border: 1px solid #CCCCCC;
+/* Action Button */
+.actionBtn {
+    background-color: #009FDF;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    font-size: 0.875rem;
+}
+
+.actionBtn:hover {
+    background-color: #041E42;
+}
+
+@media (max-width: 768px) {
+    .metricsRow {
+        grid-template-columns: 1fr;
+    }
+
+    .cardGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .container {
+        padding: 2rem 1.5rem;
+    }
 }

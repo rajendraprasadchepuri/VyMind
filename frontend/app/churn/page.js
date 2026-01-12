@@ -22,99 +22,121 @@ export default function ChurnGuardPage() {
             const res = await fetch("http://localhost:8000/modules/churn-risk", {
                 headers: { "Authorization": `Bearer ${token}` }
             });
-            if (res.ok) {
-                const data = await res.json();
-                setRisks(data);
+
+            if (!res.ok) {
+                console.error(`HTTP error! status: ${res.status}`);
+                setLoading(false);
+                return;
             }
+
+            const data = await res.json();
+            setRisks(data);
         } catch (err) {
-            console.error(err);
+            console.error("Fetch error:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    const getRiskStyle = (level) => {
-        switch (level) {
-            case "Critical": return styles.riskCritical;
-            case "High": return styles.riskHigh;
-            case "Medium": return styles.riskMedium;
-            case "Low": return styles.riskLow;
-            default: return styles.riskNonActive;
-        }
-    };
-
-    const criticalCount = risks.filter(r => r.risk_level === "Critical").length;
-    const highCount = risks.filter(r => r.risk_level === "High").length;
-    const activeCount = risks.filter(r => r.risk_level === "Low" || r.risk_level === "Medium").length;
+    const atRiskCount = risks.length;
+    const totalRevenue = risks.reduce((sum, r) => sum + r.total_spend, 0);
 
     return (
         <div className={styles.container}>
-            <header className={styles.header}>
-                <div>
-                    <h1 className={styles.title}>🛡️ ChurnGuard</h1>
-                    <p className={styles.subtitle}>Customer Retention & Risk Analysis</p>
-                </div>
-                <div>
-                    <button className="btn-primary" onClick={fetchData}>Refresh Analysis</button>
-                </div>
-            </header>
+            {/* Title Section */}
+            <div style={{ marginBottom: '1.5rem' }}>
+                <h1 style={{ fontSize: '2.5rem', fontWeight: '600', color: '#262730', marginBottom: '0.5rem' }}>
+                    🛡️ ChurnGuard: Retention Autopilot
+                </h1>
+                <p style={{ color: '#808495', fontSize: '1rem' }}>
+                    Identify and win back customers who are slipping away.
+                </p>
+            </div>
 
-            <div className={styles.statsGrid}>
-                <div className={styles.statCard}>
-                    <div className={styles.statValue} style={{ color: '#dc2626' }}>{criticalCount}</div>
-                    <div className={styles.statLabel}>Critical Risk</div>
+            {/* Metrics Row - 3 Columns */}
+            <div className={styles.metricsRow}>
+                <div className={styles.metricBox}>
+                    <div className={styles.metricLabel}>Revenue at Risk</div>
+                    <div className={styles.metricValue}>₹{totalRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    <div style={{ color: '#dc2626', fontSize: '0.875rem', marginTop: '0.25rem' }}>↓ -12%</div>
                 </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statValue} style={{ color: '#ea580c' }}>{highCount}</div>
-                    <div className={styles.statLabel}>High Risk</div>
+                <div className={styles.metricBox}>
+                    <div className={styles.metricLabel}>Customers at Risk</div>
+                    <div className={styles.metricValue}>{atRiskCount}</div>
                 </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statValue} style={{ color: '#16a34a' }}>{activeCount}</div>
-                    <div className={styles.statLabel}>Active Customers</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statValue}>{risks.length}</div>
-                    <div className={styles.statLabel}>Total Database</div>
+                <div className={styles.metricBox}>
+                    <div className={styles.metricLabel}>Win-Back Opportunity</div>
+                    <div className={styles.metricValue} style={{ fontSize: '2rem' }}>High</div>
                 </div>
             </div>
 
-            <div className={styles.tableCard}>
-                <table>
-                    <thead>
-                        <tr>
-                            <th className={styles.th}>Customer</th>
-                            <th className={styles.th}>Last Visit</th>
-                            <th className={styles.th}>Days Absent</th>
-                            <th className={styles.th}>Total Spend</th>
-                            <th className={styles.th}>Risk Level</th>
-                            <th className={styles.th}>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {risks.map((r) => (
-                            <tr key={r.customer_id}>
-                                <td className={styles.td}>
-                                    <div style={{ fontWeight: 'bold' }}>{r.customer_name}</div>
-                                    <div style={{ fontSize: '0.8em', color: '#64748b' }}>ID: {r.customer_id.substring(0, 8)}</div>
-                                </td>
-                                <td className={styles.td}>{r.last_visit ? new Date(r.last_visit).toLocaleDateString() : 'Never'}</td>
-                                <td className={styles.td}>{r.days_since === 999 ? 'N/A' : r.days_since}</td>
-                                <td className={styles.td}>₹{r.total_spend.toLocaleString()}</td>
-                                <td className={styles.td}>
-                                    <span className={`${styles.riskTag} ${getRiskStyle(r.risk_level)}`}>
-                                        {r.risk_level}
-                                    </span>
-                                </td>
-                                <td className={styles.td}>
-                                    {r.risk_level === "Critical" || r.risk_level === "High" ? (
-                                        <button className="btn-primary" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>Send Promo</button>
-                                    ) : <span>-</span>}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            {/* Divider */}
+            <hr style={{ border: 'none', borderTop: '1px solid rgba(49, 51, 63, 0.1)', margin: '2rem 0' }} />
+
+            {/* Section Title */}
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', color: '#262730', marginBottom: '1.5rem' }}>
+                ⚠️ At-Risk VIPs (Last Seen &gt; 30 Days)
+            </h2>
+
+            {/* Customer Cards */}
+            {loading ? (
+                <div style={{ color: '#808495', textAlign: 'center', padding: '3rem' }}>Loading...</div>
+            ) : risks.length === 0 ? (
+                <div className={styles.successBox}>
+                    ✅ No churn risks detected! Your customers are loyal.
+                </div>
+            ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {risks.map((row) => (
+                        <div key={row.customer_id} className={styles.customerCard}>
+                            <div className={styles.cardGrid}>
+                                {/* Column 1: Name & Phone */}
+                                <div>
+                                    <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#262730', marginBottom: '0.25rem' }}>
+                                        {row.customer_name}
+                                    </h3>
+                                    <p style={{ fontSize: '0.875rem', color: '#808495', margin: 0 }}>
+                                        Phone: {row.customer_id.substring(0, 10)}
+                                    </p>
+                                </div>
+
+                                {/* Column 2: Days Absent */}
+                                <div>
+                                    <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#262730', marginBottom: '0.5rem' }}>
+                                        Days Absent
+                                    </div>
+                                    <div className={styles.errorBox}>
+                                        {row.days_since === 999 ? 'Never' : `${row.days_since} Days`}
+                                    </div>
+                                </div>
+
+                                {/* Column 3: Total LTV */}
+                                <div>
+                                    <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#262730', marginBottom: '0.5rem' }}>
+                                        Total LTV
+                                    </div>
+                                    <div style={{ fontSize: '1rem', color: '#262730' }}>
+                                        ₹{row.total_spend.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                    </div>
+                                </div>
+
+                                {/* Column 4: Action */}
+                                <div>
+                                    <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#262730', marginBottom: '0.5rem' }}>
+                                        Auto-Action
+                                    </div>
+                                    <button
+                                        className={styles.actionBtn}
+                                        onClick={() => alert(`Offer sent to ${row.customer_name}!`)}
+                                    >
+                                        🚀 Send 'Miss You' Offer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

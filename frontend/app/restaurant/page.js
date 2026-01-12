@@ -22,9 +22,15 @@ export default function RestaurantPage() {
         if (!token) return;
 
         try {
-            const res = await fetch("/api/restaurant/tables", {
+            const res = await fetch("http://localhost:8000/restaurant/tables", {
                 headers: { "Authorization": `Bearer ${token}` }
             });
+
+            if (!res.ok) {
+                console.error(`HTTP error! status: ${res.status}`);
+                return;
+            }
+
             const data = await res.json();
             if (Array.isArray(data)) setTables(data);
         } catch (error) {
@@ -35,7 +41,7 @@ export default function RestaurantPage() {
     const handleAddTable = async () => {
         const token = localStorage.getItem("token");
         try {
-            const res = await fetch("/api/restaurant/tables", {
+            const res = await fetch("http://localhost:8000/restaurant/tables", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -53,6 +59,8 @@ export default function RestaurantPage() {
                 fetchTables();
                 setIsAdding(false);
                 setNewTable({ number: "", capacity: 4 });
+            } else {
+                console.error(`HTTP error! status: ${res.status}`);
             }
         } catch (error) {
             console.error("Add table error", error);
@@ -88,10 +96,14 @@ export default function RestaurantPage() {
                 // Save new position
                 const token = localStorage.getItem("token");
                 try {
-                    await fetch(`/api/restaurant/tables/${table.id}/position?x=${Math.round(table.x_position)}&y=${Math.round(table.y_position)}`, {
+                    const res = await fetch(`http://localhost:8000/restaurant/tables/${table.id}/position?x=${Math.round(table.x_position)}&y=${Math.round(table.y_position)}`, {
                         method: "PUT",
                         headers: { "Authorization": `Bearer ${token}` }
                     });
+
+                    if (!res.ok) {
+                        console.error(`Failed to save position: ${res.status}`);
+                    }
                 } catch (err) {
                     console.error("Failed to save position", err);
                 }
