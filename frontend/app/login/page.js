@@ -29,9 +29,11 @@ export default function LoginPage() {
             });
 
             const data = await response.json();
+            console.log("Login Response Data:", data); // DEBUG
 
             if (response.ok) {
                 if (isLogin) {
+                    console.log("Setting token:", data.access_token); // DEBUG
                     localStorage.setItem("token", data.access_token);
                     window.location.href = "/";
                 } else {

@@ -70,11 +70,17 @@ export default function InventoryPage() {
 
     const handleSave = async () => {
         const token = localStorage.getItem("token");
+
+        // Validation / Sanitization
+        const price = parseFloat(formData.price) || 0;
+        const cost_price = parseFloat(formData.cost_price) || 0;
+        const stock_quantity = parseInt(formData.stock_quantity) || 0;
+
         const payload = {
             ...formData,
-            price: parseFloat(formData.price),
-            cost_price: parseFloat(formData.cost_price),
-            stock_quantity: parseInt(formData.stock_quantity)
+            price,
+            cost_price,
+            stock_quantity
         };
 
         try {
@@ -105,10 +111,12 @@ export default function InventoryPage() {
                 fetchProducts();
                 handleCloseModal();
             } else {
-                alert("Failed to save product");
+                const err = await res.json();
+                alert(`Failed to save product: ${err.detail || "Unknown error"}`);
             }
         } catch (error) {
             console.error("Save error", error);
+            alert("An unexpected error occurred while saving.");
         }
     };
 
@@ -136,9 +144,18 @@ export default function InventoryPage() {
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1 className={styles.title}>Inventory Management</h1>
-                <button className="btn-primary" onClick={() => handleOpenModal()}>
-                    + Add Product
-                </button>
+                <div>
+                    <button
+                        className="btn-secondary"
+                        style={{ marginRight: '10px' }}
+                        onClick={() => { localStorage.removeItem("token"); window.location.href = "/login"; }}
+                    >
+                        Logout
+                    </button>
+                    <button className="btn-primary" onClick={() => handleOpenModal()}>
+                        + Add Product
+                    </button>
+                </div>
             </div>
 
             <div className={styles.tableContainer}>

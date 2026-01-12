@@ -85,3 +85,116 @@ class Setting(Base):
     value = Column(String)
 
     __table_args__ = (UniqueConstraint('account_id', 'key', name='_account_key_uc'),)
+
+class RestaurantTable(Base):
+    __tablename__ = "restaurant_tables"
+
+    id = Column(String, primary_key=True)
+    account_id = Column(String, ForeignKey("accounts.id"), index=True)
+    table_number = Column(String, nullable=False)
+    capacity = Column(Integer, default=4)
+    status = Column(String, default="AVAILABLE") # AVAILABLE, OCCUPIED, RESERVED
+    zone = Column(String, default="Main Hall")
+    x_position = Column(Integer, default=0)
+    y_position = Column(Integer, default=0)
+    current_order_id = Column(String, nullable=True)
+
+class KitchenOrder(Base):
+    __tablename__ = "kitchen_orders"
+
+    id = Column(String, primary_key=True)
+    account_id = Column(String, ForeignKey("accounts.id"), index=True)
+    table_id = Column(String, ForeignKey("restaurant_tables.id"))
+    items_json = Column(Text) # Storing list of items as JSON for simplicity in this demo
+    status = Column(String, default="PENDING") # PENDING, PREPARING, READY, SERVED
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+class Supplier(Base):
+    __tablename__ = "suppliers"
+
+    id = Column(String, primary_key=True)
+    account_id = Column(String, ForeignKey("accounts.id"), index=True)
+    name = Column(String)
+    contact_person = Column(String)
+    phone = Column(String)
+    category_specialty = Column(String)
+    created_at = Column(DateTime, server_default=func.now())
+
+class PurchaseOrder(Base):
+    __tablename__ = "purchase_orders"
+
+    id = Column(String, primary_key=True)
+    account_id = Column(String, ForeignKey("accounts.id"), index=True)
+    supplier_id = Column(String, ForeignKey("suppliers.id"))
+    order_date = Column(Date)
+    expected_date = Column(Date)
+    received_date = Column(Date)
+    status = Column(String, default="PENDING")
+    quality_rating = Column(Float)
+    notes = Column(Text)
+
+class Staff(Base):
+    __tablename__ = "staff"
+
+    id = Column(String, primary_key=True)
+    account_id = Column(String, ForeignKey("accounts.id"), index=True)
+    name = Column(String)
+    role = Column(String)
+    hourly_rate = Column(Float)
+    joined_at = Column(DateTime, server_default=func.now())
+
+class Shift(Base):
+    __tablename__ = "shifts"
+
+    id = Column(String, primary_key=True)
+    staff_id = Column(String, ForeignKey("staff.id"), index=True)
+    date = Column(Date)
+    slot = Column(String)
+    created_at = Column(DateTime, server_default=func.now())
+
+class ProductBatch(Base):
+    __tablename__ = "product_batches"
+
+    id = Column(String, primary_key=True)
+    account_id = Column(String, ForeignKey("accounts.id"), index=True)
+    product_id = Column(String, ForeignKey("products.id"), index=True)
+    batch_code = Column(String)
+    expiry_date = Column(Date, index=True)
+    quantity = Column(Integer)
+    cost_price = Column(Float)
+    created_at = Column(DateTime, server_default=func.now())
+
+class DailyContext(Base):
+    __tablename__ = "daily_context"
+
+    account_id = Column(String, ForeignKey("accounts.id"), primary_key=True)
+    date = Column(Date, primary_key=True)
+    weather_tag = Column(String)
+    event_tag = Column(String)
+    notes = Column(Text)
+
+class B2BDeal(Base):
+    __tablename__ = "b2b_deals"
+
+    id = Column(String, primary_key=True)
+    account_id = Column(String, ForeignKey("accounts.id"), index=True)
+    store_name = Column(String)
+    product_name = Column(String)
+    quantity = Column(Integer)
+    price_per_unit = Column(Float)
+    acc_phone = Column(String)
+    created_at = Column(DateTime, server_default=func.now())
+
+class CrowdCampaign(Base):
+    __tablename__ = "crowd_campaigns"
+
+    id = Column(String, primary_key=True)
+    account_id = Column(String, ForeignKey("accounts.id"), index=True)
+    item_name = Column(String)
+    description = Column(Text)
+    votes_needed = Column(Integer)
+    votes_current = Column(Integer, default=0)
+    price_est = Column(Float)
+    status = Column(String, default="ACTIVE")
+    created_at = Column(DateTime, server_default=func.now())

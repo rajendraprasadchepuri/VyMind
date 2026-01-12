@@ -1,0 +1,114 @@
+.container {
+    padding: 20px;
+    background-color: #1e293b;
+    /* Dark background for kitchen */
+    min-height: 100vh;
+    color: white;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #334155;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    color: var(--text-dark);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cardHeader {
+    background-color: #f1f5f9;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.tableNumber {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--navy-blue);
+}
+
+.time {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-family: monospace;
+}
+
+.items {
+    padding: 15px;
+    min-height: 150px;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.itemName {
+    font-weight: 600;
+}
+
+.itemQty {
+    font-weight: 800;
+    color: var(--primary-blue);
+}
+
+.actions {
+    padding: 15px;
+    background-color: #f8fafc;
+    display: flex;
+    gap: 10px;
+}
+
+.btnDone {
+    flex: 1;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btnDone:hover {
+    background-color: #059669;
+}

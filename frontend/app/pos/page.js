@@ -111,6 +111,41 @@ export default function POSPage() {
         }
     };
 
+    const handleSendToKitchen = async () => {
+        if (cart.length === 0) return;
+
+        // For demo, we'll pick a table 1
+        const tableId = "99"; // Demo Table
+        const token = localStorage.getItem("token");
+
+        try {
+            const payload = {
+                items_json: JSON.stringify(cart.map(item => ({
+                    product_name: item.name,
+                    quantity: item.quantity
+                }))),
+                status: "PENDING"
+            };
+
+            const res = await fetch(`/api/restaurant/orders?table_id=${tableId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                alert("Order sent to kitchen!");
+            } else {
+                alert("Failed to send order");
+            }
+        } catch (error) {
+            console.error("KDS error", error);
+        }
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.leftPanel}>
@@ -187,8 +222,19 @@ export default function POSPage() {
                     >
                         Complete Payment
                     </button>
+
+                    <button
+                        className="btn-secondary"
+                        style={{ width: '100%', marginTop: '10px', padding: '15px', backgroundColor: '#e2e8f0', color: '#1e293b', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}
+                        onClick={handleSendToKitchen}
+                        disabled={cart.length === 0}
+                    >
+                        Send to Kitchen
+                    </button>
                 </div>
             </div>
         </div>
     );
 }
+
+

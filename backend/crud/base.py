@@ -64,3 +64,40 @@ def create_customer(db: Session, customer: schemas.CustomerCreate):
     db.commit()
     db.refresh(db_customer)
     return db_customer
+
+# Restaurant CRUD
+def get_tables(db: Session, account_id: str):
+    return db.query(core.RestaurantTable).filter(core.RestaurantTable.account_id == account_id).all()
+
+def create_table(db: Session, table: schemas.RestaurantTableCreate):
+    db_table = core.RestaurantTable(**table.model_dump())
+    if not db_table.id:
+        db_table.id = generate_unique_id(8, prefix="TBL_")
+    db.add(db_table)
+    db.commit()
+    db.refresh(db_table)
+    return db_table
+
+def update_table_position(db: Session, table_id: str, x: int, y: int, account_id: str):
+    table = db.query(core.RestaurantTable).filter(core.RestaurantTable.id == table_id, core.RestaurantTable.account_id == account_id).first()
+    if table:
+        table.x_position = x
+        table.y_position = y
+        db.commit()
+        db.refresh(table)
+    return table
+
+def create_kitchen_order(db: Session, order: schemas.KitchenOrderCreate):
+    db_order = core.KitchenOrder(**order.model_dump())
+    if not db_order.id:
+        db_order.id = generate_unique_id(12, prefix="KOT_")
+    db.add(db_order)
+    db.commit()
+    db.refresh(db_order)
+    return db_order
+
+def get_active_orders(db: Session, account_id: str):
+    return db.query(core.KitchenOrder).filter(
+        core.KitchenOrder.account_id == account_id, 
+        core.KitchenOrder.status.in_(["PENDING", "PREPARING", "READY"])
+    ).all()

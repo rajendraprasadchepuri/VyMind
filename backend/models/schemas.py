@@ -128,3 +128,170 @@ class DashboardStats(BaseModel):
     total_sales_count: int
     product_count: int
     low_stock_count: int
+
+class RestaurantTableBase(BaseModel):
+    table_number: str
+    capacity: int = 4
+    status: str = "AVAILABLE"
+    zone: str = "Main Hall"
+    x_position: int = 0
+    y_position: int = 0
+
+class RestaurantTableCreate(RestaurantTableBase):
+    id: Optional[str] = None
+    account_id: str
+
+class RestaurantTable(RestaurantTableBase):
+    id: str
+    account_id: str
+    current_order_id: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+
+class KitchenOrderBase(BaseModel):
+    items_json: str # JSON string of items
+    status: str = "PENDING"
+
+class KitchenOrderCreate(KitchenOrderBase):
+    id: Optional[str] = None
+    table_id: str
+    account_id: str
+
+class KitchenOrder(KitchenOrderBase):
+    id: str
+    account_id: str
+    table_id: str
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    model_config = ConfigDict(from_attributes=True)
+
+# --- VendorTrust Schemas ---
+class SupplierBase(BaseModel):
+    name: str
+    contact_person: Optional[str] = None
+    phone: Optional[str] = None
+    category_specialty: Optional[str] = None
+
+class SupplierCreate(SupplierBase):
+    id: Optional[str] = None
+    account_id: str
+
+class Supplier(SupplierBase):
+    id: str
+    account_id: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class PurchaseOrderBase(BaseModel):
+    supplier_id: str
+    order_date: Optional[date] = None
+    expected_date: Optional[date] = None
+    received_date: Optional[date] = None
+    status: str = "PENDING"
+    notes: Optional[str] = None
+    quality_rating: Optional[float] = None
+
+class PurchaseOrderCreate(PurchaseOrderBase):
+    id: Optional[str] = None
+    account_id: str
+
+class PurchaseOrder(PurchaseOrderBase):
+    id: str
+    account_id: str
+    model_config = ConfigDict(from_attributes=True)
+
+# --- ShiftSmart Schemas ---
+class StaffBase(BaseModel):
+    name: str
+    role: str
+    hourly_rate: float
+
+class StaffCreate(StaffBase):
+    id: Optional[str] = None
+    account_id: str
+
+class Staff(StaffBase):
+    id: str
+    account_id: str
+    joined_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class ShiftBase(BaseModel):
+    staff_id: str
+    date: date
+    slot: str
+
+class ShiftCreate(ShiftBase):
+    id: Optional[str] = None
+
+class Shift(ShiftBase):
+    id: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+# --- FreshFlow Schemas ---
+class ProductBatchBase(BaseModel):
+    product_id: str
+    batch_code: str
+    expiry_date: date
+    quantity: int
+    cost_price: float
+
+class ProductBatchCreate(ProductBatchBase):
+    id: Optional[str] = None
+    account_id: str
+
+class ProductBatch(ProductBatchBase):
+    id: str
+    account_id: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+# --- Misc Schemas ---
+class DailyContextBase(BaseModel):
+    date: date
+    weather_tag: Optional[str] = None
+    event_tag: Optional[str] = None
+    notes: Optional[str] = None
+
+class DailyContextCreate(DailyContextBase):
+    account_id: str
+
+class DailyContext(DailyContextBase):
+    account_id: str
+    model_config = ConfigDict(from_attributes=True)
+
+class B2BDealBase(BaseModel):
+    store_name: str
+    product_name: str
+    quantity: int
+    price_per_unit: float
+    acc_phone: Optional[str] = None
+
+class B2BDealCreate(B2BDealBase):
+    id: Optional[str] = None
+    account_id: str
+
+class B2BDeal(B2BDealBase):
+    id: str
+    account_id: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class CrowdCampaignBase(BaseModel):
+    item_name: str
+    description: Optional[str] = None
+    votes_needed: int
+    votes_current: int = 0
+    price_est: float
+    status: str = "ACTIVE"
+
+class CrowdCampaignCreate(CrowdCampaignBase):
+    id: Optional[str] = None
+    account_id: str
+
+class CrowdCampaign(CrowdCampaignBase):
+    id: str
+    account_id: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+

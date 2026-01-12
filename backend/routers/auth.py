@@ -75,3 +75,7 @@ def signup(request: schemas.CompanyCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_account)
     return new_account
+
+@router.get("/me", response_model=schemas.User)
+def read_users_me(current_user: core.User = Depends(auth_utils.get_current_user)):
+    return current_user

@@ -1,0 +1,103 @@
+.container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-light);
+}
+
+.sidebar {
+    width: 300px;
+    background: white;
+    border-right: 1px solid var(--border-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+    z-index: 10;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy-blue);
+    margin-bottom: 20px;
+}
+
+.controlGroup {
+    margin-bottom: 30px;
+}
+
+.label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.floorPlan {
+    flex: 1;
+    background-color: #f1f5f9;
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 20px 20px;
+    position: relative;
+    overflow: auto;
+}
+
+.table {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, border-color 0.2s;
+    user-select: none;
+}
+
+.table:active {
+    cursor: grabbing;
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-blue);
+}
+
+.tableNumber {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--navy-blue);
+}
+
+.tableCapacity {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.tableStatus {
+    margin-top: 5px;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.statusAvailable {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.statusOccupied {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.addBtn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+}

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.database_config import engine, Base
-from backend.routers import products, auth, dashboard, pos
+from backend.routers import products, auth, dashboard, pos, restaurant
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -10,6 +10,7 @@ app = FastAPI(title="VyaparMind API", version="1.0.0")
 
 @app.on_event("startup")
 def startup_event():
+    # ... (startup logic)
     from backend.database_config import SessionLocal
     from backend.models import core
     from backend import auth as auth_utils
@@ -50,6 +51,24 @@ app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(dashboard.router)
 app.include_router(pos.router)
+app.include_router(restaurant.router)
+app.include_router(modules.router)
+
+@app.middleware("http")
+async def log_requests(request, call_next):
+    import logging
+    logger = logging.getLogger("uvicorn")
+    logger.info(f"Incoming Request: {request.method} {request.url}")
+    
+    auth_header = request.headers.get("Authorization")
+    if auth_header:
+        logger.info(f"Auth Header: {auth_header[:15]}...")
+    else:
+        logger.info("Auth Header: MISSING")
+        
+    response = await call_next(request)
+    logger.info(f"Response Status: {response.status_code}")
+    return response
 
 # CORS Configuration
 # Adjust origins in production
