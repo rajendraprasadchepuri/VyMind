@@ -11,7 +11,7 @@ router = APIRouter(
     tags=["products"],
 )
 
-@router.get("/", response_model=List[schemas.Product])
+@router.get("", response_model=List[schemas.Product])
 def read_products(
     search: Optional[str] = None,
     skip: int = 0,
@@ -33,7 +33,7 @@ def read_product(
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
 
-@router.post("/", response_model=schemas.Product)
+@router.post("", response_model=schemas.Product)
 def create_product(
     product: schemas.ProductBase,
     db: Session = Depends(get_db),

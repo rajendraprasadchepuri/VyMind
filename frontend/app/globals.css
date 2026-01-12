@@ -1,47 +1,27 @@
 :root {
-  /* Brand Colors */
-  --primary-blue: #009FDF;
-  --primary-hover: #0077A8;
-  --accent-orange: #E35205;
-  --accent-yellow: #FFCD00;
-  --navy-blue: #041E42;
+  /* SABIC Industrial Theme Tokens */
+  --primary-color: #009FDF;
+  /* SABIC Blue */
+  --primary-hover: #041E42;
+  /* SABIC Navy */
+  --background-color: #E6E7E8;
+  /* Light Grey Background */
+  --text-color: #4D4D4D;
+  /* Deep Grey Text */
+  --border-color: #C6C8CA;
+  /* Light Grey Border */
+  --card-bg: #FFFFFF;
 
   /* Semantic Colors */
-  --success-green: #10B981;
-  --warning-yellow: #F59E0B;
-  --error-red: #EF4444;
-  --info-blue: #3B82F6;
+  --success-green: #28a745;
+  --warning-orange: #ffc107;
+  --danger-red: #dc3545;
 
-  /* Neutral Scale */
-  --bg-light: #F8FAFC;
-  --bg-white: #FFFFFF;
-  --text-dark: #1E293B;
-  --text-secondary: #475569;
-  --text-muted: #94A3B8;
-  --border-color: #E2E8F0;
-  --divider: #CBD5E1;
-
-  /* Spacing Scale */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 48px;
-
-  /* Typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-
-  /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-blur: blur(12px);
+  /* Layout */
+  --sidebar-width: 260px;
+  --border-radius: 0px;
+  /* Sharp Corners */
+  --font-family: 'Arial', 'Helvetica', sans-serif;
 }
 
 * {
@@ -54,9 +34,9 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  font-family: var(--font-sans);
-  background-color: var(--bg-light);
-  color: var(--text-dark);
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 a {
@@ -64,159 +44,81 @@ a {
   text-decoration: none;
 }
 
-/* Premium Typography */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  color: var(--navy-blue);
-}
-
-/* Glassmorphism Classes */
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-}
-
-/* Corporate Buttons */
+/* Utilities */
 .btn-primary {
-  background-color: var(--primary-blue);
+  background-color: var(--primary-color);
   color: white;
-  padding: 12px 24px;
-  border-radius: 6px;
   border: none;
-  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s;
 }
 
 .btn-primary:hover {
-  background-color: var(--navy-blue);
-  transform: translateY(-1px);
-}
-
-/* Input Fields */
-.input-field {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background-color: white;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 3px rgba(0, 159, 223, 0.1);
-}
-
-/* === UTILITY CLASSES === */
-
-/* Layout Utilities */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-lg);
-}
-
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.grid-cols-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-md);
-}
-
-/* Typography Utilities */
-.text-sm {
-  font-size: 0.875rem;
-}
-
-.text-lg {
-  font-size: 1.125rem;
-}
-
-.text-xl {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.text-muted {
-  color: var(--text-muted);
-}
-
-.text-bold {
-  font-weight: 700;
-}
-
-/* Status Badges */
-.badge {
-  display: inline-flex;
-  padding: 2px 8px;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.badge-success {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: var(--success-green);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.badge-warning {
-  background-color: rgba(245, 158, 11, 0.1);
-  color: var(--warning-yellow);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.badge-error {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--error-red);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-/* Form Enhancements */
-.form-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: var(--space-xs);
-  color: var(--text-secondary);
+  background-color: var(--primary-hover);
 }
 
 .btn-secondary {
-  background-color: white;
-  color: var(--text-dark);
+  background-color: transparent;
+  color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
 .btn-secondary:hover {
-  background-color: var(--bg-light);
-  border-color: var(--text-muted);
+  background-color: #f1f5f9;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: none;
+  /* Flat Industrial Look */
+}
+
+/* Table Styles - Industrial */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border: 1px solid var(--border-color);
+}
+
+th,
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+th {
+  background-color: #F5F5F5;
+  /* Legacy */
+  font-weight: 700;
+  text-transform: none;
+  /* Legacy */
+  font-size: 0.9rem;
+  color: #4D4D4D;
+}
+
+/* Form Styles */
+.input-field {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: white;
+  font-family: inherit;
+}
+
+.input-field:focus {
+  outline: 2px solid var(--primary-color);
+  border-color: transparent;
 }

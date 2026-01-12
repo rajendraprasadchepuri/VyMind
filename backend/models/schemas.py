@@ -320,3 +320,59 @@ class DemandPredictionResponse(BaseModel):
     context: str
     predictions: List[PredictionItem]
 
+# --- VoiceAudit ---
+class VoiceLogBase(BaseModel):
+    transcript: str
+    action_extracted: Optional[str] = "AUDIT"
+    confidence_score: float = 0.0
+
+class VoiceLogCreate(VoiceLogBase):
+    id: Optional[str] = None
+    account_id: str
+
+class VoiceLog(VoiceLogBase):
+    id: str
+    account_id: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+# --- ChurnGuard ---
+class ChurnRisk(BaseModel):
+    customer_id: str
+    customer_name: str
+    last_visit: Optional[date] = None
+    days_since: int
+    total_spend: float
+    risk_level: str # Low, Medium, High, Critical
+
+# --- GeoViz ---
+class GeoPoint(BaseModel):
+    city: str
+    lat: float
+    lng: float
+    value: float # e.g. total sales or customer count
+
+# --- ShelfSense ---
+class ShelfInsight(BaseModel):
+    product_id: str
+    product_name: str
+    insight_type: str # EXPIRY_RISK, STAGNANT_STOCK, LOW_TURNOVER
+    details: str
+    metric: float # e.g. Days to Expiry, or Days Since Last Sale
+    severity: str # High, Medium, Low
+
+# --- Online Ordering ---
+class OnlineOrder(BaseModel):
+    order_id: str
+    customer_name: str
+    address: str
+    items_summary: str
+    total_amount: float
+    status: str # NEW, ACCEPTED, DISPATCHED, DELIVERED
+    payment_mode: str
+    time_elapsed_mins: int
+
+
+
+
+

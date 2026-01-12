@@ -1,0 +1,123 @@
+.container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #E6E7E8;
+    /* Legacy background */
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #4D4D4D;
+    /* Legacy text color */
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.subtitle {
+    color: #4D4D4D;
+    font-size: 1rem;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.statCard {
+    background-color: #FFFFFF;
+    padding: 15px;
+    border: 1px solid #E6E7E8;
+    border-radius: 0px;
+    /* Sharp corners */
+    text-align: center;
+    box-shadow: none;
+    /* Flat look */
+}
+
+.statCard:hover {
+    border-color: #009FDF;
+    /* SABIC Blue on hover */
+}
+
+.statValue {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4D4D4D;
+}
+
+.statLabel {
+    color: #4D4D4D;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.5rem;
+}
+
+.tableCard {
+    background-color: #FFFFFF;
+    border: 1px solid #E6E7E8;
+    border-radius: 0px;
+    /* Sharp corners */
+    overflow: hidden;
+    box-shadow: none;
+}
+
+.th,
+.td {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #E6E7E8;
+}
+
+.th {
+    background-color: #F5F5F5;
+    font-weight: 700;
+    color: #4D4D4D;
+}
+
+.riskTag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    font-weight: 700;
+    font-size: 0.75rem;
+    border-radius: 0px;
+    /* Sharp corners */
+    text-transform: uppercase;
+}
+
+.riskCritical {
+    background-color: #FFE5E5;
+    color: #CC0000;
+    border: 1px solid #CC0000;
+}
+
+.riskHigh {
+    background-color: #FFF4E5;
+    color: #FF8C00;
+    border: 1px solid #FF8C00;
+}
+
+.riskMedium {
+    background-color: #FFF9E5;
+    color: #CCA300;
+    border: 1px solid #CCA300;
+}
+
+.riskLow {
+    background-color: #E5F9E5;
+    color: #008000;
+    border: 1px solid #008000;
+}
+
+.riskNonActive {
+    background-color: #F5F5F5;
+    color: #888888;
+    border: 1px solid #CCCCCC;
+}

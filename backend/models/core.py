@@ -198,3 +198,13 @@ class CrowdCampaign(Base):
     price_est = Column(Float)
     status = Column(String, default="ACTIVE")
     created_at = Column(DateTime, server_default=func.now())
+
+class VoiceLog(Base):
+    __tablename__ = "voice_logs"
+
+    id = Column(String, primary_key=True)
+    account_id = Column(String, ForeignKey("accounts.id"), index=True)
+    transcript = Column(Text)
+    action_extracted = Column(String, default="AUDIT")
+    confidence_score = Column(Float, default=0.0)
+    created_at = Column(DateTime, server_default=func.now())

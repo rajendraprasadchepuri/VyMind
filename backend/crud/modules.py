@@ -225,3 +225,176 @@ def vote_crowd_campaign(db: Session, campaign_id: str):
         db.commit()
         db.refresh(camp)
     return camp
+
+# --- VoiceAudit ---
+def get_voice_logs(db: Session, account_id: str):
+    return db.query(core.VoiceLog).filter(core.VoiceLog.account_id == account_id).order_by(core.VoiceLog.created_at.desc()).all()
+
+def create_voice_log(db: Session, log: schemas.VoiceLogCreate):
+    db_log = core.VoiceLog(
+        id=generate_unique_id(),
+        account_id=log.account_id,
+        transcript=log.transcript,
+        action_extracted=log.action_extracted,
+        confidence_score=log.confidence_score
+    )
+    db.refresh(db_log)
+    return db_log
+
+# --- ChurnGuard ---
+def get_churn_risks(db: Session, account_id: str):
+    customers = db.query(core.Customer).filter(core.Customer.account_id == account_id).all()
+    results = []
+    today = datetime.now().date()
+    
+    for c in customers:
+        last_txn = db.query(core.Transaction).filter(
+            core.Transaction.customer_id == c.id
+        ).order_by(core.Transaction.timestamp.desc()).first()
+        
+        last_date = last_txn.timestamp.date() if last_txn else None
+        total_spend = db.query(func.sum(core.Transaction.total_amount)).filter(
+            core.Transaction.customer_id == c.id
+        ).scalar() or 0.0
+        
+        days_since = 999
+        risk = "Non-Active"
+        
+        if last_date:
+            days_since = (today - last_date).days
+            if days_since > 90: risk = "Critical"
+            elif days_since > 60: risk = "High"
+            elif days_since > 30: risk = "Medium"
+            else: risk = "Low"
+            
+        results.append(schemas.ChurnRisk(
+            customer_id=c.id,
+            customer_name=c.name,
+            last_visit=last_date,
+            days_since=days_since,
+            total_spend=total_spend,
+            risk_level=risk
+        ))
+        
+        
+    return sorted(results, key=lambda x: x.days_since, reverse=True)
+
+# --- GeoViz ---
+CITY_COORDS = {
+    "New York": (40.7128, -74.0060),
+    "Los Angeles": (34.0522, -118.2437),
+    "Chicago": (41.8781, -87.6298),
+    "Houston": (29.7604, -95.3698),
+    "Phoenix": (33.4484, -112.0740),
+    "Philadelphia": (39.9526, -75.1652),
+    "San Antonio": (29.4241, -98.4936),
+    "San Diego": (32.7157, -117.1611),
+    "Dallas": (32.7767, -96.7970),
+    "San Jose": (37.3382, -121.8863),
+    "Unknown": (39.8283, -98.5795) # Center of US approx
+}
+
+def get_geo_data(db: Session, account_id: str):
+    # Aggregate sales by City from Customers joining Transactions? 
+    # Or just Customer count by City? Let's do Sales Volume by City.
+    
+    cities = db.query(
+        core.Customer.city, 
+        func.sum(core.Transaction.total_amount).label("total_sales")
+    ).join(core.Transaction).filter(
+        core.Transaction.account_id == account_id
+    ).group_by(core.Customer.city).all()
+    
+    results = []
+    for city, volume in cities:
+        city_norm = city.strip() if city else "Unknown"
+        lat, lng = CITY_COORDS.get(city_norm, (39.8283 + (len(city_norm)*0.1), -98.5795)) # Pseudo-random fallback
+        
+        results.append(schemas.GeoPoint(
+            city=city_norm,
+            lat=lat,
+            lng=lng,
+            value=volume or 0.0
+        ))
+    return results
+
+# --- ShelfSense ---
+def get_shelf_insights(db: Session, account_id: str):
+    insights = []
+    
+    # 1. Expiry Risk (Batches expiring in next 30 days)
+    today = datetime.now().date()
+    expiry_threshold = today + __import__("datetime").timedelta(days=30)
+    
+    risky_batches = db.query(core.ProductBatch).filter(
+        core.ProductBatch.account_id == account_id,
+        core.ProductBatch.expiry_date <= expiry_threshold,
+        core.ProductBatch.expiry_date >= today,
+        core.ProductBatch.quantity > 0
+    ).all()
+    
+    for b in risky_batches:
+        prod = db.query(core.Product).filter(core.Product.id == b.product_id).first()
+        days_left = (b.expiry_date - today).days
+        insights.append(schemas.ShelfInsight(
+            product_id=b.product_id,
+            product_name=prod.name if prod else "Unknown",
+            insight_type="EXPIRY_RISK",
+            details=f"Batch {b.batch_code} expires in {days_left} days",
+            metric=float(days_left),
+            severity="High" if days_left < 7 else "Medium"
+        ))
+        
+    # 2. Stagnant Stock (Products with stock > 0 but no sales in 30 days)
+    # Simplified check: Just find high stock items for now to demonstrate UI
+    
+    stagnant_prods = db.query(core.Product).filter(
+        core.Product.account_id == account_id,
+        core.Product.stock_quantity > 50
+    ).limit(5).all()
+    
+    for p in stagnant_prods:
+        insights.append(schemas.ShelfInsight(
+            product_id=p.id,
+            product_name=p.name,
+            insight_type="STAGNANT_STOCK",
+            details="High stock level with low recent velocity",
+            metric=float(p.stock_quantity),
+            severity="Low"
+        ))
+        
+    return insights
+
+# --- Online Ordering ---
+def get_online_orders(db: Session, account_id: str):
+    # Simulating external orders since we don't have a customer app in this demo
+    # In production, this would query a real 'orders' table with source='ONLINE'
+    
+    mock_orders = [
+        {
+            "order_id": "ORD-9928",
+            "customer_name": "Aditi Sharma",
+            "address": "Flat 402, Sunshine Apts, MG Road",
+            "items_summary": "2x Basmati Rice, 1x Oil",
+            "total_amount": 1250.0,
+            "status": "NEW",
+            "payment_mode": "UPI",
+            "time_elapsed_mins": 5
+        },
+        {
+            "order_id": "ORD-9929",
+            "customer_name": "Rajesh Kumar",
+            "address": "Villa 12, Green Valley",
+            "items_summary": "1x Detergent, 5x Soap",
+            "total_amount": 450.0,
+            "status": "ACCEPTED",
+            "payment_mode": "COD",
+            "time_elapsed_mins": 18
+        }
+    ]
+    
+    results = []
+    for m in mock_orders:
+        results.append(schemas.OnlineOrder(**m))
+        
+    return results

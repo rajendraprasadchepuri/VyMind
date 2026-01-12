@@ -13,14 +13,14 @@ router = APIRouter(
 )
 
 # --- Settings ---
-@router.get("/", response_model=List[schemas.Setting])
+@router.get("", response_model=List[schemas.Setting])
 def read_settings(
     db: Session = Depends(get_db),
     current_user: core.User = Depends(get_current_user)
 ):
     return modules.get_settings(db, current_user.account_id)
 
-@router.put("/", response_model=schemas.Setting)
+@router.put("", response_model=schemas.Setting)
 def update_setting(
     setting: schemas.SettingBase,
     db: Session = Depends(get_db),

@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import styles from "./dashboard.module.css";
+import styles from "./home.module.css";
 
 export default function Home() {
-  const [user, setUser] = useState(null);
-  const [stats, setStats] = useState({ products: 0, revenue: 0, sales: 0, lowStock: 0 });
+  const [stats, setStats] = useState({ products: 0, transactions: 0 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -14,83 +14,60 @@ export default function Home() {
       return;
     }
 
-    // Basic health check
-    fetch("/api/health")
-      .then(res => res.json())
-      .then(data => console.log("System Status:", data.status));
-
     // Fetch Dashboard Stats
-    fetch("/api/dashboard/stats", {
+    fetch("http://localhost:8000/dashboard/stats", {
       headers: { "Authorization": `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => {
         setStats({
           products: data.product_count,
-          revenue: data.total_revenue,
-          sales: data.total_sales_count,
-          lowStock: data.low_stock_count
+          transactions: data.total_sales_count
         });
+        setLoading(false);
       })
-      .catch(err => console.error("Fetch error:", err));
+      .catch(err => {
+        console.error("Fetch error:", err);
+        setLoading(false);
+      });
   }, []);
 
   return (
-    <main className={styles.main}>
-      <header className={styles.header}>
-        <div className={styles.logo}>🧠 VyaparMind</div>
-        <div className={styles.userProfile}>
-          <button onClick={() => { localStorage.removeItem("token"); window.location.reload(); }}>
-            Logout
-          </button>
-        </div>
-      </header>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>
+          <span className={styles.icon}>💬</span> VyaparMind: Intelligent Retail
+        </h1>
+      </div>
 
-      <section className={styles.hero}>
-        <h1>Welcome to Vyapar<span>Mind</span></h1>
-        <p>Intelligent control for your retail ecosystem.</p>
-      </section>
+      <div className={styles.welcome}>
+        <h2>Welcome to your Retail Management System</h2>
+        <p className={styles.subtitle}>Use the sidebar to navigate between modules.</p>
+      </div>
 
-      <div className={styles.grid}>
-        <div className={styles.card}>
-          <h3>Total Revenue</h3>
-          <p className={styles.metric}>${stats.revenue.toLocaleString()}</p>
-          <span className={styles.description}>Lifetime sales</span>
-        </div>
-
-        <div className={styles.card}>
-          <h3>Total Transactions</h3>
-          <p className={styles.metric}>{stats.sales}</p>
-          <span className={styles.description}>Completed orders</span>
-        </div>
-
-        <div className={styles.card}>
-          <h3>Inventory Count</h3>
-          <p className={styles.metric}>{stats.products}</p>
-          <span className={styles.description}>Products in stock</span>
-        </div>
-
-        <div className={styles.card}>
-          <h3>Low Stock Alerts</h3>
-          <p className={styles.metric} style={{ color: stats.lowStock > 0 ? '#ef4444' : '#10b981' }}>{stats.lowStock}</p>
-          <span className={styles.description}>Items needing attention</span>
-        </div>
-
-        <div className={styles.card}>
-          <h3>System Status</h3>
-          <p className={styles.metric} style={{ color: '#10b981' }}>Healthy</p>
-          <span className={styles.description}>All systems operational</span>
-        </div>
-
-        <div className={styles.card}>
-          <h3>Quick Links</h3>
-          <div className={styles.links}>
-            <a href="/pos">Point of Sale (POS)</a>
-            <a href="/inventory">Inventory Management</a>
-            <a href="/dashboard">Analytics Dashboard</a>
+      <div className={styles.statusSection}>
+        <h3>Quick Status:</h3>
+        <div className={styles.statusGrid}>
+          <div className={styles.statBox}>
+            <div className={styles.statLabel}>Total Products</div>
+            <div className={styles.statValue}>{stats.products}</div>
+          </div>
+          <div className={styles.statBox}>
+            <div className={styles.statLabel}>Total Transactions</div>
+            <div className={styles.statValue}>{stats.transactions}</div>
+          </div>
+          <div className={styles.statBox}>
+            <div className={styles.statLabel}>System Status</div>
+            <div className={styles.statValue} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              Online <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }}></span>
+            </div>
           </div>
         </div>
       </div>
-    </main>
+
+      <div className={styles.infoBox}>
+        <span>👍</span> Select Inventory, POS, or Dashboard from the sidebar to begin.
+      </div>
+    </div>
   );
 }

@@ -157,3 +157,52 @@ def vote_campaign(
     current_user: core.User = Depends(get_current_user)
 ):
     return modules.vote_crowd_campaign(db, campaign_id)
+
+# --- VoiceAudit ---
+@router.get("/voice-logs", response_model=List[schemas.VoiceLog])
+def read_voice_logs(
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    return modules.get_voice_logs(db, current_user.account_id)
+
+@router.post("/voice-logs", response_model=schemas.VoiceLog)
+def create_voice_log(
+    log: schemas.VoiceLogBase,
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    log_create = schemas.VoiceLogCreate(**log.model_dump(), account_id=current_user.account_id)
+    return modules.create_voice_log(db, log_create)
+
+# --- ChurnGuard ---
+@router.get("/churn-risk", response_model=List[schemas.ChurnRisk])
+def read_churn_risk(
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    return modules.get_churn_risks(db, current_user.account_id)
+
+# --- GeoViz ---
+@router.get("/geoviz", response_model=List[schemas.GeoPoint])
+def read_geoviz(
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    return modules.get_geo_data(db, current_user.account_id)
+
+# --- ShelfSense ---
+@router.get("/shelf-sense", response_model=List[schemas.ShelfInsight])
+def read_shelf_sense(
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    return modules.get_shelf_insights(db, current_user.account_id)
+
+# --- Online Ordering ---
+@router.get("/online-orders", response_model=List[schemas.OnlineOrder])
+def read_online_orders(
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    return modules.get_online_orders(db, current_user.account_id)

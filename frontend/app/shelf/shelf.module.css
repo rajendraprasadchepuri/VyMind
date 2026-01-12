@@ -1,0 +1,94 @@
+.container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #E6E7E8;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #4D4D4D;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.subtitle {
+    color: #4D4D4D;
+    font-size: 1rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.card {
+    background-color: #FFFFFF;
+    padding: 1.5rem;
+    border: 1px solid #E6E7E8;
+    border-radius: 0px;
+    box-shadow: none;
+}
+
+.cardTitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #4D4D4D;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.insightList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.insightItem {
+    padding: 1rem;
+    border-left: 4px solid #ccc;
+    background: #f8fafc;
+}
+
+.severityHigh {
+    border-left-color: #ef4444;
+    background: #fef2f2;
+}
+
+.severityMedium {
+    border-left-color: #f59e0b;
+}
+
+.severityLow {
+    border-left-color: #3b82f6;
+}
+
+.productName {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1rem;
+}
+
+.detail {
+    font-size: 0.9rem;
+    color: #475569;
+    margin-top: 0.2rem;
+}
+
+.metricBadge {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0px;
+    background: white;
+    border: 1px solid #e2e8f0;
+}
