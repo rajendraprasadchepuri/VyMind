@@ -24,12 +24,12 @@ def startup_event():
             db.add(demo_account)
             db.commit()
             
-        # Check for admin user
-        admin = db.query(core.User).filter(core.User.username == "admin").first()
+        # Check for admin user specifically for the demo account
+        admin = db.query(core.User).filter(core.User.username == "admin", core.User.account_id == demo_id).first()
         if not admin:
             hashed_pwd = auth_utils.get_password_hash("admin123")
             admin = core.User(
-                id="ADMIN_ID_123",
+                id="ADMIN_ID_DEMO",
                 account_id=demo_id,
                 username="admin",
                 email="admin@vyaparmind.com",
