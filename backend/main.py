@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.database_config import engine, Base
-from backend.routers import products, auth, dashboard, pos, restaurant
+from backend.routers import products, auth, dashboard, pos, restaurant, modules, settings
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -53,6 +53,7 @@ app.include_router(dashboard.router)
 app.include_router(pos.router)
 app.include_router(restaurant.router)
 app.include_router(modules.router)
+app.include_router(settings.router)
 
 @app.middleware("http")
 async def log_requests(request, call_next):

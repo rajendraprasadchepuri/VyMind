@@ -4,6 +4,59 @@ from typing import List, Optional
 from datetime import datetime
 from backend.models import core, schemas
 from backend.crud.base import generate_unique_id
+from sqlalchemy import func
+
+# --- Settings ---
+def get_settings(db: Session, account_id: str):
+    return db.query(core.Setting).filter(core.Setting.account_id == account_id).all()
+
+def update_setting(db: Session, setting: schemas.SettingCreate):
+    db_setting = db.query(core.Setting).filter(
+        core.Setting.account_id == setting.account_id,
+        core.Setting.key == setting.key
+    ).first()
+    
+    if db_setting:
+        db_setting.value = setting.value
+    else:
+        db_setting = core.Setting(
+            account_id=setting.account_id,
+            key=setting.key,
+            value=setting.value
+        )
+        db.add(db_setting)
+    db.commit()
+    db.refresh(db_setting)
+    return db_setting
+
+# --- Analytics ---
+def analyze_demand(db: Session, account_id: str, weather: str, event: str):
+    # 1. Find dates with matching context
+    matching_dates = db.query(core.DailyContext.date).filter(
+        core.DailyContext.account_id == account_id,
+        core.DailyContext.weather_tag == weather,
+        core.DailyContext.event_tag == event
+    ).all()
+    
+    date_list = [d[0] for d in matching_dates]
+    
+    if not date_list:
+        return []
+        
+    # 2. Sum sales for those dates
+    # JOIN Transaction -> TransactionItem
+    # Filter where Transaction.timestamp.date() IN date_list
+    # Note: timestamp is DateTime, we cast to Date
+    
+    results = db.query(
+        core.TransactionItem.product_name,
+        func.sum(core.TransactionItem.quantity).label("total_qty")
+    ).join(core.Transaction).filter(
+        core.Transaction.account_id == account_id,
+        func.date(core.Transaction.timestamp).in_(date_list)
+    ).group_by(core.TransactionItem.product_name).order_by(func.sum(core.TransactionItem.quantity).desc()).limit(5).all()
+    
+    return [{"product_name": r[0], "total_qty": r[1]} for r in results]
 
 # --- VendorTrust CRUD ---
 def get_suppliers(db: Session, account_id: str):
@@ -126,3 +179,49 @@ def get_daily_context(db: Session, account_id: str, date: datetime.date):
         core.DailyContext.account_id == account_id,
         core.DailyContext.date == date
     ).first()
+
+# --- StockSwap (B2B) ---
+def get_b2b_deals(db: Session, account_id: str):
+    return db.query(core.B2BDeal).filter(core.B2BDeal.account_id == account_id).all()
+
+def create_b2b_deal(db: Session, deal: schemas.B2BDealCreate):
+    db_deal = core.B2BDeal(
+        id=generate_unique_id(),
+        account_id=deal.account_id,
+        store_name=deal.store_name,
+        product_name=deal.product_name,
+        quantity=deal.quantity,
+        price_per_unit=deal.price_per_unit,
+        acc_phone=deal.acc_phone
+    )
+    db.add(db_deal)
+    db.commit()
+    db.refresh(db_deal)
+    return db_deal
+
+# --- CrowdStock ---
+def get_crowd_campaigns(db: Session, account_id: str):
+    return db.query(core.CrowdCampaign).filter(core.CrowdCampaign.account_id == account_id).all()
+
+def create_crowd_campaign(db: Session, camp: schemas.CrowdCampaignCreate):
+    db_camp = core.CrowdCampaign(
+        id=generate_unique_id(),
+        account_id=camp.account_id,
+        item_name=camp.item_name,
+        description=camp.description,
+        votes_needed=camp.votes_needed,
+        price_est=camp.price_est,
+        status="ACTIVE"
+    )
+    db.add(db_camp)
+    db.commit()
+    db.refresh(db_camp)
+    return db_camp
+
+def vote_crowd_campaign(db: Session, campaign_id: str):
+    camp = db.query(core.CrowdCampaign).filter(core.CrowdCampaign.id == campaign_id).first()
+    if camp:
+        camp.votes_current += 1
+        db.commit()
+        db.refresh(camp)
+    return camp

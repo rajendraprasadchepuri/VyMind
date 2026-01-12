@@ -115,3 +115,45 @@ def set_daily_context(
 ):
     ctx_create = schemas.DailyContextCreate(**ctx.model_dump(), account_id=current_user.account_id)
     return modules.set_daily_context(db, ctx_create)
+
+# --- StockSwap (B2B) ---
+@router.get("/b2b-deals", response_model=List[schemas.B2BDeal])
+def read_b2b_deals(
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    return modules.get_b2b_deals(db, current_user.account_id)
+
+@router.post("/b2b-deals", response_model=schemas.B2BDeal)
+def create_b2b_deal(
+    deal: schemas.B2BDealBase,
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    deal_create = schemas.B2BDealCreate(**deal.model_dump(), account_id=current_user.account_id)
+    return modules.create_b2b_deal(db, deal_create)
+
+# --- CrowdStock ---
+@router.get("/crowd-campaigns", response_model=List[schemas.CrowdCampaign])
+def read_crowd_campaigns(
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    return modules.get_crowd_campaigns(db, current_user.account_id)
+
+@router.post("/crowd-campaigns", response_model=schemas.CrowdCampaign)
+def create_crowd_campaign(
+    camp: schemas.CrowdCampaignBase,
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    camp_create = schemas.CrowdCampaignCreate(**camp.model_dump(), account_id=current_user.account_id)
+    return modules.create_crowd_campaign(db, camp_create)
+
+@router.post("/crowd-campaigns/{campaign_id}/vote")
+def vote_campaign(
+    campaign_id: str,
+    db: Session = Depends(get_db),
+    current_user: core.User = Depends(get_current_user)
+):
+    return modules.vote_crowd_campaign(db, campaign_id)

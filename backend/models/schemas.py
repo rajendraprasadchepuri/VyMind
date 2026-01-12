@@ -295,3 +295,28 @@ class CrowdCampaign(CrowdCampaignBase):
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
+
+# --- Settings & Analytics ---
+class SettingBase(BaseModel):
+    key: str
+    value: str
+
+class SettingCreate(SettingBase):
+    account_id: str
+
+class Setting(SettingBase):
+    account_id: str
+    model_config = ConfigDict(from_attributes=True)
+
+class DemandPredictionRequest(BaseModel):
+    weather: str
+    event: str
+
+class PredictionItem(BaseModel):
+    product_name: str
+    total_qty: int
+
+class DemandPredictionResponse(BaseModel):
+    context: str
+    predictions: List[PredictionItem]
+
