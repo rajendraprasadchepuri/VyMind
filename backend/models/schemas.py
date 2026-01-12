@@ -63,6 +63,15 @@ class ProductCreate(ProductBase):
     id: Optional[str] = None
     account_id: str
 
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    category: Optional[str] = None
+    price: Optional[float] = None
+    cost_price: Optional[float] = None
+    stock_quantity: Optional[int] = None
+    tax_rate: Optional[float] = None
+    science_tags: Optional[str] = None
+
 class Product(ProductBase):
     id: str
     account_id: str
@@ -113,3 +122,9 @@ class Transaction(TransactionBase):
     account_id: str
     timestamp: datetime
     model_config = ConfigDict(from_attributes=True)
+
+class DashboardStats(BaseModel):
+    total_revenue: float
+    total_sales_count: int
+    product_count: int
+    low_stock_count: int

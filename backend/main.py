@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.database_config import engine, Base
-from backend.routers import products, auth
+from backend.routers import products, auth, dashboard, pos
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -48,6 +48,8 @@ def startup_event():
 
 app.include_router(auth.router)
 app.include_router(products.router)
+app.include_router(dashboard.router)
+app.include_router(pos.router)
 
 # CORS Configuration
 # Adjust origins in production

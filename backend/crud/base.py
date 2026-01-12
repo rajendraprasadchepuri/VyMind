@@ -31,13 +31,22 @@ def create_product(db: Session, product: schemas.ProductCreate):
     db.refresh(db_product)
     return db_product
 
-def update_product(db: Session, product_id: str, account_id: str, product_update: schemas.ProductBase):
+def update_product(db: Session, product_id: str, account_id: str, product_update: schemas.ProductUpdate):
     db_product = get_product(db, product_id, account_id)
     if db_product:
-        for key, value in product_update.model_dump().items():
+        # Use exclude_unset=True to only update provided fields
+        update_data = product_update.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
             setattr(db_product, key, value)
         db.commit()
         db.refresh(db_product)
+    return db_product
+
+def delete_product(db: Session, product_id: str, account_id: str):
+    db_product = get_product(db, product_id, account_id)
+    if db_product:
+        db.delete(db_product)
+        db.commit()
     return db_product
 
 # Customer CRUD

@@ -5,7 +5,7 @@ import styles from "./dashboard.module.css";
 
 export default function Home() {
   const [user, setUser] = useState(null);
-  const [stats, setStats] = useState({ products: 0, transactions: 0 });
+  const [stats, setStats] = useState({ products: 0, revenue: 0, sales: 0, lowStock: 0 });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -14,20 +14,23 @@ export default function Home() {
       return;
     }
 
-    // Basic health check/stats fetch
+    // Basic health check
     fetch("/api/health")
       .then(res => res.json())
       .then(data => console.log("System Status:", data.status));
 
-    // Fetch products count (demo)
-    fetch("/api/products", {
+    // Fetch Dashboard Stats
+    fetch("/api/dashboard/stats", {
       headers: { "Authorization": `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) {
-          setStats(prev => ({ ...prev, products: data.length }));
-        }
+        setStats({
+          products: data.product_count,
+          revenue: data.total_revenue,
+          sales: data.total_sales_count,
+          lowStock: data.low_stock_count
+        });
       })
       .catch(err => console.error("Fetch error:", err));
   }, []);
@@ -50,9 +53,27 @@ export default function Home() {
 
       <div className={styles.grid}>
         <div className={styles.card}>
-          <h3>Total Products</h3>
+          <h3>Total Revenue</h3>
+          <p className={styles.metric}>${stats.revenue.toLocaleString()}</p>
+          <span className={styles.description}>Lifetime sales</span>
+        </div>
+
+        <div className={styles.card}>
+          <h3>Total Transactions</h3>
+          <p className={styles.metric}>{stats.sales}</p>
+          <span className={styles.description}>Completed orders</span>
+        </div>
+
+        <div className={styles.card}>
+          <h3>Inventory Count</h3>
           <p className={styles.metric}>{stats.products}</p>
-          <span className={styles.description}>Items in inventory</span>
+          <span className={styles.description}>Products in stock</span>
+        </div>
+
+        <div className={styles.card}>
+          <h3>Low Stock Alerts</h3>
+          <p className={styles.metric} style={{ color: stats.lowStock > 0 ? '#ef4444' : '#10b981' }}>{stats.lowStock}</p>
+          <span className={styles.description}>Items needing attention</span>
         </div>
 
         <div className={styles.card}>
